@@ -1,0 +1,163 @@
+/* Glassmorphism visual layer. Controls and study data stay in script.js. */
+:root {
+  --glass-fill: rgba(255, 255, 255, .43);
+  --glass-edge: rgba(255, 255, 255, .88);
+  --glass-highlight: rgba(255, 255, 255, .65);
+  --glass-shadow: 0 18px 48px rgba(39, 60, 108, .10);
+  --glass-field: rgba(255, 255, 255, .48);
+  --glass-clock: rgba(255, 255, 255, .54);
+  --glass-dialog: rgba(245, 249, 255, .88);
+  --muted: #455671;
+}
+:root[data-theme="dark"] {
+  --glass-fill: rgba(18, 29, 50, .56);
+  --glass-edge: rgba(200, 222, 255, .22);
+  --glass-highlight: rgba(215, 230, 255, .13);
+  --glass-shadow: 0 20px 52px rgba(0, 5, 20, .28);
+  --glass-field: rgba(12, 24, 43, .51);
+  --glass-clock: rgba(22, 35, 58, .66);
+  --glass-dialog: rgba(19, 30, 50, .90);
+  --muted: #c1cde0;
+}
+body {
+  background:
+    radial-gradient(ellipse at 5% 23%, rgba(var(--accent-rgb), .29), transparent 47%),
+    radial-gradient(ellipse at 93% 4%, rgba(109, 190, 244, .38), transparent 42%),
+    radial-gradient(ellipse at 75% 73%, rgba(var(--accent-rgb), .23), transparent 45%),
+    linear-gradient(140deg, #edf3ff 0%, #e5eaff 44%, #e5f4ff 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse at 4% 25%, rgba(var(--accent-rgb), .32), transparent 46%),
+    radial-gradient(ellipse at 94% 6%, rgba(22, 133, 169, .26), transparent 43%),
+    radial-gradient(ellipse at 78% 80%, rgba(var(--accent-rgb), .21), transparent 40%),
+    linear-gradient(140deg, #101b31, #14162a 50%, #0d2332);
+  background-attachment: fixed;
+}
+.topbar {
+  max-width: 1256px;
+  margin: max(20px, env(safe-area-inset-top)) auto 0;
+  min-height: 76px;
+  padding: 14px 24px;
+  border-radius: 24px;
+}
+main { padding-top: 36px; }
+.page-heading { margin-bottom: 28px; }
+h1 { font-weight: 600; line-height: 1.6; }
+.brand-icon {
+  border: 1px solid rgba(255,255,255,.45);
+  background: linear-gradient(140deg, rgba(255,255,255,.24), transparent 65%), var(--blue);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.35), 0 6px 16px rgba(var(--accent-rgb),.23);
+}
+:root[data-glass="true"] :is(.topbar, .card, .stats, .session, .empty, .continue-card) {
+  background: linear-gradient(135deg, var(--glass-highlight), transparent 43%), var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  backdrop-filter: blur(24px) saturate(145%);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight), inset 0 -1px 0 rgba(255,255,255,.09);
+}
+.card { border-radius: 28px; }
+.stats { border-radius: 22px; padding: 24px 0; }
+.stats > div { border-color: rgba(var(--accent-rgb), .14); }
+.stats strong { font-weight: 550; }
+:root[data-glass="true"] .timer-card {
+  background: linear-gradient(150deg, var(--glass-highlight), rgba(var(--accent-rgb),.055) 70%), var(--glass-fill);
+}
+:root[data-glass="true"] :is(input, textarea, select, .thoughts textarea) {
+  background: var(--glass-field);
+  border-color: var(--glass-edge);
+  box-shadow: inset 0 1px 3px rgba(28,48,86,.035), 0 1px 0 rgba(255,255,255,.16);
+}
+input, textarea, select { border-radius: 13px; }
+select option { color: var(--dark); background: var(--surface-solid); }
+:root[data-glass="true"] :is(.secondary, .presets button) {
+  background: linear-gradient(135deg, var(--glass-highlight), transparent), var(--glass-field);
+  border-color: var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 3px 9px rgba(20,42,80,.035);
+}
+:root[data-glass="true"] .presets button.selected {
+  background: var(--light);
+  border-color: var(--blue);
+  box-shadow: inset 0 0 0 1px var(--blue);
+}
+.primary {
+  border-radius: 14px;
+  border-color: rgba(255,255,255,.34);
+  background: linear-gradient(145deg, rgba(255,255,255,.10), transparent 55%), var(--blue);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.30), 0 8px 22px rgba(var(--accent-rgb),.24);
+}
+.secondary { border-radius: 13px; }
+.mode-pill, .badge, .step { border: 1px solid var(--line); }
+.mode-pill { padding: 6px 14px; }
+.tip { border: 1px solid var(--line); border-radius: 14px; }
+/* A masked progress ring leaves the clock centre translucent. */
+.clock {
+  position: relative;
+  background: transparent;
+  padding: 5px;
+  box-shadow: 0 0 0 12px rgba(var(--accent-rgb),.045), 0 0 0 13px var(--glass-edge), 0 14px 35px rgba(var(--accent-rgb),.09);
+}
+.clock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 4px;
+  background: conic-gradient(var(--blue) var(--progress), rgba(var(--accent-rgb),.17) 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+:root[data-glass="true"] .clock-inner {
+  background: linear-gradient(145deg, var(--glass-highlight), transparent 65%), var(--glass-clock);
+  box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 rgba(255,255,255,.1);
+}
+.clock-inner { position: relative; }
+#timer { font-weight: 500; }
+:root[data-glass="true"] dialog {
+  background: linear-gradient(140deg, var(--glass-highlight), transparent 48%), var(--glass-dialog);
+  border: 1px solid var(--glass-edge);
+  border-radius: 26px;
+  -webkit-backdrop-filter: blur(32px) saturate(135%);
+  backdrop-filter: blur(32px) saturate(135%);
+  box-shadow: 0 24px 90px rgba(5,15,40,.25), inset 0 1px 0 var(--glass-highlight);
+}
+.history-section { margin-top: 36px; }
+.empty { border-style: solid; border-radius: 22px; }
+.session { border-radius: 20px; }
+footer { border-color: rgba(var(--accent-rgb),.15); }
+/* Respect the solid-surface setting, including the clock and dialogs. */
+:root[data-glass="false"] :is(.topbar,.card,.stats,.session,.empty,.continue-card,dialog,.clock-inner) {
+  background: var(--surface-solid);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (hover:hover) and (pointer:fine) {
+  .secondary:hover:not(:disabled), .presets button:hover:not(:disabled) { border-color: var(--blue); }
+}
+@media (max-width:1320px) { .topbar { margin-left:32px; margin-right:32px; } }
+@media (max-width:700px) {
+  body, :root[data-theme="dark"] body { background-attachment: scroll; }
+  .topbar { margin: max(12px,env(safe-area-inset-top)) 14px 0; padding:12px 16px; min-height:68px; border-radius:20px; }
+  main { padding-top: 26px; }
+  .card { border-radius:24px; }
+  .stats { padding:20px 0; }
+  :root[data-glass="true"] :is(.card,.topbar,.stats,.session,.empty,.continue-card) {
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    backdrop-filter: blur(16px) saturate(130%);
+  }
+}
+@media (prefers-reduced-transparency:reduce) {
+  :root[data-glass] :is(.topbar,.card,.stats,.session,.empty,.continue-card,dialog,.clock-inner) {
+    background:var(--surface-solid); -webkit-backdrop-filter:none; backdrop-filter:none;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  :root[data-glass] :is(.topbar,.card,.stats,.session,.empty,.continue-card,dialog,.clock-inner) { background:var(--surface-solid); }
+}
+.calendar-panel{max-width:640px;margin:0 0 24px;padding:24px}.calendar-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.calendar-header h3{font-size:18px;margin:0}.calendar-header button{min-width:44px;font-size:22px;padding:2px 14px}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;text-align:center;margin:16px 0}.calendar-grid>span{font-size:13px;color:var(--muted);align-self:center}.calendar-day{position:relative;min-width:0;min-height:48px;padding:8px 2px 13px;background:var(--glass-field);border:1px solid var(--line);border-radius:12px;color:var(--dark);font-size:16px}.calendar-day.has-sessions:after{content:'';position:absolute;bottom:5px;left:calc(50% - 2px);width:4px;height:4px;background:var(--blue);border-radius:50%}.calendar-day[aria-current="date"]{border-color:var(--blue);font-weight:bold}.calendar-day.chosen{background:var(--blue);color:#fff;border-color:var(--blue)}.calendar-day.chosen:after{background:white}.history-tools{display:flex;flex-wrap:wrap;gap:10px}.danger{color:#ac203b}:root[data-theme="dark"] .danger{color:#ffb5c2}.notification-settings{margin-top:24px;padding-top:14px;border-top:1px solid var(--line)}.notification-settings h3{font-size:16px}.notification-settings p{margin-top:12px}#delete-confirm p{overflow-wrap:anywhere}#history-filter{font-size:14px}@media(max-width:420px){.calendar-panel{padding:15px}.calendar-grid{gap:4px}.calendar-header h3{font-size:16px}}
+/* Navigation drawer: focus is trapped by the native modal dialog. */
+.hamburger{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:46px;height:46px;flex-shrink:0;padding:10px}.hamburger span{display:block;width:20px;height:2px;background:currentColor;border-radius:3px}.current-page{margin-left:auto;color:var(--muted);font-size:14px}.navigation-drawer{position:fixed;inset:0 auto 0 0;margin:0;width:min(340px,88vw);height:100vh;height:100dvh;max-height:100dvh;max-width:88vw;padding:max(24px,env(safe-area-inset-top)) 22px max(24px,env(safe-area-inset-bottom));border-radius:0 26px 26px 0!important;border-left:0!important;overflow-y:auto}.navigation-drawer[open]{animation:drawer-in .24s cubic-bezier(.2,.7,.2,1) both}.navigation-drawer.is-closing{animation:drawer-out .18s ease-in both}.navigation-drawer::backdrop{animation:backdrop-in .2s ease both}.navigation-drawer.is-closing::backdrop{animation:backdrop-out .18s ease both}.navigation-drawer nav{display:flex;flex-direction:column;gap:10px}.nav-item{display:flex;align-items:center;gap:14px;border:1px solid transparent;border-radius:14px;padding:14px 16px;min-height:52px;text-align:start;background:transparent;color:var(--dark);font-size:16px}.nav-item>span:first-child{width:24px;text-align:center;font:25px system-ui}.nav-item[aria-current="page"]{background:var(--light);border-color:var(--blue)}.nav-item:hover{background:var(--light)}.navigation-drawer .eyebrow{margin-top:24px}.drawer-note{margin-top:40px}.navigation-drawer .settings-heading{margin-bottom:24px}.history-section{margin-top:0}#history-filter{margin-top:18px}html:lang(zh),html:lang(ja){font-family:system-ui,"PingFang SC","PingFang TC","Hiragino Kaku Gothic ProN","Microsoft YaHei",sans-serif}html:lang(zh) .eyebrow,html:lang(ja) .eyebrow{font-size:13px;letter-spacing:.03em;line-height:1.8}#notification-welcome p{margin-top:15px}#notification-welcome h2{margin-bottom:14px}.topbar{gap:16px}.brand{flex-shrink:0}@keyframes drawer-in{from{transform:translateX(-100%);opacity:.6}to{transform:translateX(0);opacity:1}}@keyframes drawer-out{to{transform:translateX(-100%);opacity:0}}@keyframes backdrop-in{from{opacity:0}to{opacity:1}}@keyframes backdrop-out{to{opacity:0}}@media(max-width:700px){.topbar{gap:10px}.current-page{font-size:12px}.brand{font-size:21px}.brand-icon{width:30px;height:30px;font-size:20px;margin-right:6px}.hamburger{width:44px;height:44px}.top-caption{display:none}}@media(prefers-reduced-motion:reduce){.navigation-drawer[open],.navigation-drawer.is-closing,.navigation-drawer::backdrop{animation:none!important}}
